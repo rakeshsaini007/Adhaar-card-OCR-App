@@ -1,0 +1,7 @@
+{
+  "name": "Aadhaar OCR & Sheet Logger",
+  "description": "An intelligent utility to capture Aadhaar cards, extract details using Gemini AI, and log records to a secure digital ledger.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

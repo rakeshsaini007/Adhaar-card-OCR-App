@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { Layout } from './components/Layout';
-import { CaptureCard } from './components/CaptureCard';
-import { DataVerification } from './components/DataVerification';
-import { RecordsTable } from './components/RecordsTable';
-import { AppStep, AadhaarData, OCRResult } from './types';
-import { saveToGoogleSheets } from './services/sheetService';
+import { Layout } from './components/Layout.tsx';
+import { CaptureCard } from './components/CaptureCard.tsx';
+import { DataVerification } from './components/DataVerification.tsx';
+import { RecordsTable } from './components/RecordsTable.tsx';
+import { AppStep, AadhaarData, OCRResult } from './types.ts';
+import { saveToGoogleSheets } from './services/sheetService.ts';
 
 const STORAGE_KEY = 'aadhaar_records_v1';
 
@@ -18,7 +18,6 @@ const App: React.FC = () => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load records from LocalStorage (Local Cache)
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -50,19 +49,13 @@ const App: React.FC = () => {
     };
     
     try {
-      // 1. Attempt to save to Google Sheets
       await saveToGoogleSheets(newRecord);
-      
-      // 2. Update local state/cache
       saveRecordsLocal([newRecord, ...records]);
-      
-      // 3. UI Transition
       setStep('HISTORY');
       setCurrentImage(null);
       setOcrData(null);
     } catch (err: any) {
       setError("Sync failed: " + err.message + ". Record saved locally.");
-      // Even if sync fails, we keep it locally
       saveRecordsLocal([newRecord, ...records]);
       setStep('HISTORY');
     } finally {

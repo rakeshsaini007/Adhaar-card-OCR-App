@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Camera, FileText, History, ShieldCheck } from 'lucide-react';
-import { AppStep } from '../types';
+import { Camera, History, ShieldCheck } from 'lucide-react';
+import { AppStep } from '../types.ts';
 
 interface LayoutProps {
   children: React.ReactNode;

@@ -1,11 +1,10 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { OCRResult } from "../types";
+import { OCRResult } from "../types.ts";
 
 export const extractAadhaarDetails = async (base64Image: string): Promise<OCRResult> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
-  // Extract just the base64 part if it contains data URL prefix
   const base64Data = base64Image.split(',')[1] || base64Image;
 
   const response = await ai.models.generateContent({

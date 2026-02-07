@@ -1,8 +1,8 @@
 
 import React, { useRef, useState } from 'react';
-import { Upload, Camera, AlertCircle, Loader2, Image as ImageIcon } from 'lucide-react';
-import { extractAadhaarDetails } from '../services/geminiService';
-import { OCRResult } from '../types';
+import { Upload, Camera, AlertCircle, Loader2 } from 'lucide-react';
+import { extractAadhaarDetails } from '../services/geminiService.ts';
+import { OCRResult } from '../types.ts';
 
 interface CaptureCardProps {
   onCaptured: (image: string, data: OCRResult) => void;

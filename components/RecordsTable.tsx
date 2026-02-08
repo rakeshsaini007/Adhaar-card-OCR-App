@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { AadhaarData } from '../types';
-import { Trash2, ExternalLink, Plus, Search, FileSpreadsheet, Download } from 'lucide-react';
+import { Trash2, ExternalLink, Plus, FileSpreadsheet, Download } from 'lucide-react';
 
 interface RecordsTableProps {
   records: AadhaarData[];
@@ -50,10 +50,10 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onDelete, o
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-100">
                   <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Aadhaar Holder</th>
+                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">नाम (Hindi)</th>
                   <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Details</th>
                   <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Gender</th>
                   <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Aadhaar Number</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Timestamp</th>
                   <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
@@ -69,6 +69,9 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onDelete, o
                       </div>
                     </td>
                     <td className="px-6 py-4">
+                      <span className="text-sm font-medium text-slate-700">{record.hindiName}</span>
+                    </td>
+                    <td className="px-6 py-4">
                       <span className="text-sm text-slate-600">DOB: {record.dob}</span>
                     </td>
                     <td className="px-6 py-4">
@@ -78,11 +81,6 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onDelete, o
                       <code className="bg-slate-100 px-2 py-1 rounded text-slate-800 font-mono text-sm">
                         {record.aadhaarNumber}
                       </code>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-xs text-slate-400">
-                        {new Date(record.timestamp).toLocaleDateString()} {new Date(record.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">

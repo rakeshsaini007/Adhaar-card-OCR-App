@@ -18,15 +18,15 @@ function doPost(e) {
     
     // Create headers if sheet is empty
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(["Name", "DOB", "Gender", "Aadhaar Number", "Photo (Base64)", "Timestamp"]);
-      sheet.getRange(1, 1, 1, 6).setFontWeight("bold").setBackground("#f3f4f6");
+      // Updated headers to include 'नाम' per request
+      sheet.appendRow(["Name", "नाम", "DOB", "gender", "Aadhaar Number", "Photo (Base64)", "Timestamp"]);
+      sheet.getRange(1, 1, 1, 7).setFontWeight("bold").setBackground("#f3f4f6");
     }
     
     // Append the record
-    // Note: Google Sheets has a limit of 50,000 characters per cell. 
-    // High-res base64 images might be truncated if they exceed this.
     sheet.appendRow([
       data.name,
+      data.hindiName,
       data.dob,
       data.gender,
       data.aadhaarNumber,
@@ -43,7 +43,6 @@ function doPost(e) {
   }
 }
 
-// Optional: Handle GET requests to check connectivity
 function doGet() {
   return ContentService.createTextOutput("Aadhaar OCR Backend is Running!")
     .setMimeType(ContentService.MimeType.TEXT);

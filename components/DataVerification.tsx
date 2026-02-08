@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
 import { OCRResult } from '../types';
-// Fixed: VenusMars renamed to VenusAndMars
-import { Check, X, User, Calendar, Hash, Save, Loader2, VenusAndMars } from 'lucide-react';
+import { Check, X, User, Calendar, Hash, Save, Loader2, VenusAndMars, Languages } from 'lucide-react';
 
 interface DataVerificationProps {
   initialData: OCRResult;
@@ -52,7 +51,7 @@ export const DataVerification: React.FC<DataVerificationProps> = ({
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 text-slate-400">Full Name</label>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Full Name (English)</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                   <User size={18} />
@@ -68,9 +67,26 @@ export const DataVerification: React.FC<DataVerificationProps> = ({
               </div>
             </div>
 
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">नाम (Full Name in Hindi)</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <Languages size={18} />
+                </div>
+                <input 
+                  type="text"
+                  name="hindiName"
+                  value={formData.hindiName}
+                  onChange={handleChange}
+                  disabled={isSaving}
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-slate-800 font-medium disabled:opacity-50"
+                />
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 text-slate-400">Date of Birth</label>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Date of Birth</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                     <Calendar size={18} />
@@ -88,10 +104,9 @@ export const DataVerification: React.FC<DataVerificationProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 text-slate-400">Gender</label>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Gender</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                    {/* Fixed: VenusMars renamed to VenusAndMars */}
                     <VenusAndMars size={18} />
                   </div>
                   <select 
@@ -110,7 +125,7 @@ export const DataVerification: React.FC<DataVerificationProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 text-slate-400">Aadhaar Number</label>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Aadhaar Number</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                   <Hash size={18} />

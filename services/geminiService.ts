@@ -8,7 +8,6 @@ export const extractAadhaarDetails = async (base64Image: string): Promise<OCRRes
   
   const base64Data = base64Image.split(',')[1] || base64Image;
 
-  // Use a targeted prompt that guides the model through bilingual patterns commonly found on Aadhaar cards.
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: {
@@ -20,7 +19,20 @@ export const extractAadhaarDetails = async (base64Image: string): Promise<OCRRes
           },
         },
         {
-          text: "Analyze this Indian Aadhaar Card image and extract the following details precisely:\n\n1. Name: Full name in English characters.\n2. Date of Birth (DOB): In DD/MM/YYYY format.\n3. Gender: Look for the label. It often appears as 'Male / पुरुष' or 'Female / महिला'. Extract strictly as 'Male', 'Female', or 'Transgender'.\n4. Aadhaar Number: The 12-digit number (usually formatted as XXXX XXXX XXXX).\n\nReturn only a valid JSON object matching the schema.",
+          text: `Analyze this Indian Aadhaar Card image and extract data with high precision. 
+          Focus on identifying both the English name and the name written in Hindi script.
+          
+          Extraction Rules:
+          1. Name: Full name in English characters.
+          2. Hindi Name (नाम): Full name written in Hindi script. This is usually located above or next to the English name.
+          3. DOB: Date of Birth in DD/MM/YYYY format.
+          4. Gender: Identify the gender label (e.g., 'Male / पुरुष' or 'Female / महिला'). 
+             - If you see 'Male' or 'पुरुष', return 'Male'.
+             - If you see 'Female' or 'महिला', return 'Female'.
+             - If it is 'Transgender', return 'Transgender'.
+          5. Aadhaar Number: The 12-digit number formatted as XXXX XXXX XXXX.
+          
+          Return only a valid JSON object.`,
         },
       ],
     },
@@ -31,22 +43,27 @@ export const extractAadhaarDetails = async (base64Image: string): Promise<OCRRes
         properties: {
           name: {
             type: Type.STRING,
-            description: "Person's full name.",
+            description: "Full name in English.",
+          },
+          hindiName: {
+            type: Type.STRING,
+            description: "Full name in Hindi (नाम).",
           },
           dob: {
             type: Type.STRING,
-            description: "Date of Birth (format: DD/MM/YYYY).",
+            description: "Date of birth (DD/MM/YYYY).",
           },
           gender: {
             type: Type.STRING,
-            description: "Gender: Must be 'Male', 'Female', or 'Transgender'. If it says 'Male / पुरुष', use 'Male'.",
+            description: "Strictly 'Male', 'Female', or 'Transgender'.",
+            enum: ["Male", "Female", "Transgender"],
           },
           aadhaarNumber: {
             type: Type.STRING,
-            description: "12-digit Aadhaar number with spaces.",
+            description: "12-digit number with spaces.",
           },
         },
-        required: ["name", "dob", "gender", "aadhaarNumber"],
+        required: ["name", "hindiName", "dob", "gender", "aadhaarNumber"],
       },
     },
   });
@@ -57,27 +74,23 @@ export const extractAadhaarDetails = async (base64Image: string): Promise<OCRRes
     
     const result = JSON.parse(text) as OCRResult;
     
-    // Normalization logic: Ensures the extracted string matches the exact case and value 
-    // expected by the React state and the <select> component.
+    // Safety Normalization Layer for Gender
     if (result.gender) {
       const g = result.gender.trim().toLowerCase();
-      if (g.includes('female') || g === 'f' || g.includes('महिला')) {
+      if (g.includes('female') || g.includes('महिला') || g === 'f') {
         result.gender = 'Female';
-      } else if (g.includes('male') || g === 'm' || g.includes('पुरुष')) {
+      } else if (g.includes('male') || g.includes('पुरुष') || g === 'm') {
         result.gender = 'Male';
       } else if (g.includes('trans')) {
         result.gender = 'Transgender';
       } else {
-        // Fallback to Male if unsure, as it's the first option in the select dropdown
-        result.gender = 'Male';
+        result.gender = 'Male'; // Default fallback
       }
-    } else {
-      result.gender = 'Male';
     }
 
     return result;
   } catch (error) {
-    console.error("Failed to parse AI response", error);
-    throw new Error("AI could not reliably identify the gender or other details. Please try a clearer, brighter photo.");
+    console.error("OCR Parse Error:", error);
+    throw new Error("Could not extract details. Please ensure the card is well-lit and the text is clearly visible.");
   }
 };

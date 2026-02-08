@@ -7,7 +7,7 @@ import { RecordsTable } from './components/RecordsTable.tsx';
 import { AppStep, AadhaarData, OCRResult } from './types.ts';
 import { saveToGoogleSheets } from './services/sheetService.ts';
 
-const STORAGE_KEY = 'aadhaar_records_v1';
+const STORAGE_KEY = 'aadhaar_records_v2';
 
 const App: React.FC = () => {
   const [step, setStep] = useState<AppStep>('UPLOAD');
@@ -45,7 +45,6 @@ const App: React.FC = () => {
       id: crypto.randomUUID(),
       ...finalData,
       photoUrl: currentImage!,
-      timestamp: new Date().toISOString(),
     };
     
     try {

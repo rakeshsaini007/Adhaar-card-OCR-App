@@ -3,10 +3,13 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { OCRResult } from "../types.ts";
 
 export const extractAadhaarDetails = async (base64Image: string): Promise<OCRResult> => {
+  // Always initialize with the named parameter apiKey from process.env.API_KEY
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const base64Data = base64Image.split(',')[1] || base64Image;
 
+  // Use the recommended contents object structure (instead of array) for generating content.
+  // Using 'gemini-3-flash-preview' for the OCR task.
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: {
@@ -18,17 +21,7 @@ export const extractAadhaarDetails = async (base64Image: string): Promise<OCRRes
           },
         },
         {
-          text: `Analyze this Indian Aadhaar Card image and extract data with maximum precision.
-          
-          Extraction Rules:
-          1. Name: Full name in English.
-          2. Hindi Name (नाम): Full name in Hindi script.
-          3. Care of (C/O): Extract the father's or husband's name often preceded by C/O, S/O, W/O, or D/O.
-          4. DOB: Date of Birth in DD/MM/YYYY format.
-          5. Gender: 'Male', 'Female', or 'Transgender'.
-          6. Aadhaar Number: The 12-digit number (XXXX XXXX XXXX).
-          
-          Return only a valid JSON object.`,
+          text: "Analyze this image of an Indian Aadhaar Card. Extract the Full Name, Date of Birth (DOB), and the 12-digit Aadhaar Number. Return the result in a clean JSON format.",
         },
       ],
     },
@@ -37,39 +30,32 @@ export const extractAadhaarDetails = async (base64Image: string): Promise<OCRRes
       responseSchema: {
         type: Type.OBJECT,
         properties: {
-          name: { type: Type.STRING },
-          hindiName: { type: Type.STRING },
-          careOf: { type: Type.STRING, description: "Father/Husband name (C/O)" },
-          dob: { type: Type.STRING },
-          gender: { 
-            type: Type.STRING, 
-            enum: ["Male", "Female", "Transgender"] 
+          name: {
+            type: Type.STRING,
+            description: "The full name of the person as written on the card.",
           },
-          aadhaarNumber: { type: Type.STRING },
+          dob: {
+            type: Type.STRING,
+            description: "The date of birth in DD/MM/YYYY format.",
+          },
+          aadhaarNumber: {
+            type: Type.STRING,
+            description: "The 12-digit Aadhaar number, formatted as XXXX XXXX XXXX if possible.",
+          },
         },
-        required: ["name", "hindiName", "careOf", "dob", "gender", "aadhaarNumber"],
+        required: ["name", "dob", "aadhaarNumber"],
+        propertyOrdering: ["name", "dob", "aadhaarNumber"],
       },
     },
   });
 
   try {
+    // Access the .text property directly (not as a method)
     const text = response.text;
     if (!text) throw new Error("No response from AI");
-    
-    const result = JSON.parse(text) as OCRResult;
-    
-    // Normalization logic
-    if (result.gender) {
-      const g = result.gender.trim().toLowerCase();
-      if (g.includes('female') || g.includes('महिला')) result.gender = 'Female';
-      else if (g.includes('male') || g.includes('पुरुष')) result.gender = 'Male';
-      else if (g.includes('trans')) result.gender = 'Transgender';
-      else result.gender = 'Male';
-    }
-
-    return result;
+    return JSON.parse(text) as OCRResult;
   } catch (error) {
-    console.error("OCR Parse Error:", error);
-    throw new Error("Could not extract details clearly. Please ensure the photo is bright and clear.");
+    console.error("Failed to parse AI response", error);
+    throw new Error("Could not extract details accurately. Please try a clearer photo.");
   }
 };

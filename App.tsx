@@ -42,6 +42,7 @@ const App: React.FC = () => {
     setError(null);
 
     const newRecord: AadhaarData = {
+      id: crypto.randomUUID(),
       ...finalData,
       photoUrl: currentImage!,
       timestamp: new Date().toISOString(),
@@ -62,8 +63,8 @@ const App: React.FC = () => {
     }
   };
 
-  const handleDelete = (timestamp: string) => {
-    const filtered = records.filter(r => r.timestamp !== timestamp);
+  const handleDelete = (id: string) => {
+    const filtered = records.filter(r => r.id !== id);
     saveRecordsLocal(filtered);
   };
 

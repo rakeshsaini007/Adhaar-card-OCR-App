@@ -8,8 +8,7 @@ export const extractAadhaarDetails = async (base64Image: string): Promise<OCRRes
   
   const base64Data = base64Image.split(',')[1] || base64Image;
 
-  // Use the recommended contents object structure (instead of array) for generating content.
-  // Using 'gemini-3-flash-preview' for the OCR task.
+  // Use a targeted prompt that guides the model through bilingual patterns commonly found on Aadhaar cards.
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: {
@@ -21,7 +20,7 @@ export const extractAadhaarDetails = async (base64Image: string): Promise<OCRRes
           },
         },
         {
-          text: "Analyze this image of an Indian Aadhaar Card. Extract the Full Name, Date of Birth (DOB), Gender (usually Male/Female/Transgender), and the 12-digit Aadhaar Number. Return the result in a clean JSON format.",
+          text: "Analyze this Indian Aadhaar Card image and extract the following details precisely:\n\n1. Name: Full name in English characters.\n2. Date of Birth (DOB): In DD/MM/YYYY format.\n3. Gender: Look for the label. It often appears as 'Male / पुरुष' or 'Female / महिला'. Extract strictly as 'Male', 'Female', or 'Transgender'.\n4. Aadhaar Number: The 12-digit number (usually formatted as XXXX XXXX XXXX).\n\nReturn only a valid JSON object matching the schema.",
         },
       ],
     },
@@ -32,34 +31,53 @@ export const extractAadhaarDetails = async (base64Image: string): Promise<OCRRes
         properties: {
           name: {
             type: Type.STRING,
-            description: "The full name of the person as written on the card.",
+            description: "Person's full name.",
           },
           dob: {
             type: Type.STRING,
-            description: "The date of birth in DD/MM/YYYY format.",
+            description: "Date of Birth (format: DD/MM/YYYY).",
           },
           gender: {
             type: Type.STRING,
-            description: "The gender of the person (Male, Female, or Transgender).",
+            description: "Gender: Must be 'Male', 'Female', or 'Transgender'. If it says 'Male / पुरुष', use 'Male'.",
           },
           aadhaarNumber: {
             type: Type.STRING,
-            description: "The 12-digit Aadhaar number, formatted as XXXX XXXX XXXX if possible.",
+            description: "12-digit Aadhaar number with spaces.",
           },
         },
         required: ["name", "dob", "gender", "aadhaarNumber"],
-        propertyOrdering: ["name", "dob", "gender", "aadhaarNumber"],
       },
     },
   });
 
   try {
-    // Access the .text property directly (not as a method)
     const text = response.text;
     if (!text) throw new Error("No response from AI");
-    return JSON.parse(text) as OCRResult;
+    
+    const result = JSON.parse(text) as OCRResult;
+    
+    // Normalization logic: Ensures the extracted string matches the exact case and value 
+    // expected by the React state and the <select> component.
+    if (result.gender) {
+      const g = result.gender.trim().toLowerCase();
+      if (g.includes('female') || g === 'f' || g.includes('महिला')) {
+        result.gender = 'Female';
+      } else if (g.includes('male') || g === 'm' || g.includes('पुरुष')) {
+        result.gender = 'Male';
+      } else if (g.includes('trans')) {
+        result.gender = 'Transgender';
+      } else {
+        // Fallback to Male if unsure, as it's the first option in the select dropdown
+        result.gender = 'Male';
+      }
+    } else {
+      result.gender = 'Male';
+    }
+
+    return result;
   } catch (error) {
     console.error("Failed to parse AI response", error);
-    throw new Error("Could not extract details accurately. Please try a clearer photo.");
+    throw new Error("AI could not reliably identify the gender or other details. Please try a clearer, brighter photo.");
   }
 };

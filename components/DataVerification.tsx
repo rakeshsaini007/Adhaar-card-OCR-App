@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { OCRResult } from '../types';
-import { Check, X, User, Calendar, Hash, Save, Loader2, VenusAndMars, Languages } from 'lucide-react';
+import { X, User, Calendar, Hash, Save, Loader2, VenusAndMars, Languages, Heart } from 'lucide-react';
 
 interface DataVerificationProps {
   initialData: OCRResult;
@@ -29,145 +29,90 @@ export const DataVerification: React.FC<DataVerificationProps> = ({
     <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-300">
       <div className="flex flex-col lg:flex-row">
         {/* Card Preview */}
-        <div className="lg:w-1/2 p-6 bg-slate-900 flex flex-col items-center justify-center min-h-[300px]">
+        <div className="lg:w-1/3 p-6 bg-slate-900 flex flex-col items-center justify-center min-h-[300px]">
           <h3 className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Verification Image</h3>
-          <div className="relative group">
+          <div className="relative">
             <img 
               src={image} 
               alt="Aadhaar Card" 
               className="max-w-full h-auto rounded-xl shadow-2xl border border-slate-700"
             />
-            <div className="absolute inset-0 bg-blue-600/10 rounded-xl pointer-events-none border-2 border-blue-500/30"></div>
+            <div className="absolute inset-0 bg-blue-600/5 rounded-xl pointer-events-none border border-blue-500/20"></div>
           </div>
-          <p className="text-slate-500 text-xs mt-4">Please verify the text against the image above.</p>
         </div>
 
         {/* Form Details */}
-        <div className="lg:w-1/2 p-8">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-slate-800">Verify Extraction</h2>
-            <p className="text-slate-500 text-sm">Review and edit the AI-extracted details if necessary.</p>
+        <div className="lg:w-2/3 p-8">
+          <div className="mb-6 flex justify-between items-start">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-800">Verify Extraction</h2>
+              <p className="text-slate-500 text-sm">Review all fields captured by the AI.</p>
+            </div>
+            <span className="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full border border-blue-100">
+              AI PROCESSED
+            </span>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Full Name (English)</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="col-span-1">
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Name (English)</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                  <User size={18} />
-                </div>
-                <input 
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  disabled={isSaving}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-slate-800 font-medium disabled:opacity-50"
-                />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <input name="name" value={formData.name} onChange={handleChange} disabled={isSaving} className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">नाम (Full Name in Hindi)</label>
+            <div className="col-span-1">
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">नाम (Hindi)</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                  <Languages size={18} />
-                </div>
-                <input 
-                  type="text"
-                  name="hindiName"
-                  value={formData.hindiName}
-                  onChange={handleChange}
-                  disabled={isSaving}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-slate-800 font-medium disabled:opacity-50"
-                />
+                <Languages className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <input name="hindiName" value={formData.hindiName} onChange={handleChange} disabled={isSaving} className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Date of Birth</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                    <Calendar size={18} />
-                  </div>
-                  <input 
-                    type="text"
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                    disabled={isSaving}
-                    placeholder="DD/MM/YYYY"
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-slate-800 font-medium disabled:opacity-50"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Gender</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                    <VenusAndMars size={18} />
-                  </div>
-                  <select 
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    disabled={isSaving}
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-slate-800 font-medium disabled:opacity-50 appearance-none"
-                  >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Transgender">Transgender</option>
-                  </select>
-                </div>
+            <div className="col-span-1 md:col-span-2">
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Care of (C/O)</label>
+              <div className="relative">
+                <Heart className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <input name="careOf" value={formData.careOf} onChange={handleChange} disabled={isSaving} placeholder="Father or Husband name" className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Aadhaar Number</label>
+            <div className="col-span-1">
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Date of Birth</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                  <Hash size={18} />
-                </div>
-                <input 
-                  type="text"
-                  name="aadhaarNumber"
-                  value={formData.aadhaarNumber}
-                  onChange={handleChange}
-                  disabled={isSaving}
-                  placeholder="XXXX XXXX XXXX"
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-slate-800 font-medium disabled:opacity-50"
-                />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <input name="dob" value={formData.dob} onChange={handleChange} disabled={isSaving} placeholder="DD/MM/YYYY" className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+              </div>
+            </div>
+
+            <div className="col-span-1">
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Gender</label>
+              <div className="relative">
+                <VenusAndMars className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <select name="gender" value={formData.gender} onChange={handleChange} disabled={isSaving} className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none appearance-none">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Transgender">Transgender</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="col-span-1 md:col-span-2">
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Aadhaar Number</label>
+              <div className="relative">
+                <Hash className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <input name="aadhaarNumber" value={formData.aadhaarNumber} onChange={handleChange} disabled={isSaving} placeholder="XXXX XXXX XXXX" className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none" />
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 mt-8">
-            <button 
-              onClick={onCancel}
-              disabled={isSaving}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 font-semibold transition-colors disabled:opacity-50"
-            >
-              <X size={18} />
-              Cancel
+          <div className="flex gap-4 mt-8">
+            <button onClick={onCancel} disabled={isSaving} className="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+              <X size={16} /> Cancel
             </button>
-            <button 
-              onClick={() => onConfirm(formData)}
-              disabled={isSaving}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold shadow-lg shadow-blue-200 transition-all hover:-translate-y-0.5 disabled:bg-blue-400 disabled:translate-y-0"
-            >
-              {isSaving ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" />
-                  Syncing to Sheet...
-                </>
-              ) : (
-                <>
-                  <Save size={18} />
-                  Confirm & Sync
-                </>
-              )}
+            <button onClick={() => onConfirm(formData)} disabled={isSaving} className="flex-[2] px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold shadow-lg shadow-blue-200 flex items-center justify-center gap-2">
+              {isSaving ? <><Loader2 size={16} className="animate-spin" /> Syncing...</> : <><Save size={16} /> Confirm & Save</>}
             </button>
           </div>
         </div>

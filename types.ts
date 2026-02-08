@@ -2,6 +2,7 @@
 export interface AadhaarData {
   name: string;
   hindiName: string;
+  careOf: string;
   dob: string;
   gender: string;
   aadhaarNumber: string;
@@ -12,6 +13,7 @@ export interface AadhaarData {
 export interface OCRResult {
   name: string;
   hindiName: string;
+  careOf: string;
   dob: string;
   gender: string;
   aadhaarNumber: string;

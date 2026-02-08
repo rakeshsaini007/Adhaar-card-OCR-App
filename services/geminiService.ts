@@ -21,7 +21,7 @@ export const extractAadhaarDetails = async (base64Image: string): Promise<OCRRes
           },
         },
         {
-          text: "Analyze this image of an Indian Aadhaar Card. Extract the Full Name, Date of Birth (DOB), and the 12-digit Aadhaar Number. Return the result in a clean JSON format.",
+          text: "Analyze this image of an Indian Aadhaar Card. Extract the Full Name, Date of Birth (DOB), Gender (usually Male/Female/Transgender), and the 12-digit Aadhaar Number. Return the result in a clean JSON format.",
         },
       ],
     },
@@ -38,13 +38,17 @@ export const extractAadhaarDetails = async (base64Image: string): Promise<OCRRes
             type: Type.STRING,
             description: "The date of birth in DD/MM/YYYY format.",
           },
+          gender: {
+            type: Type.STRING,
+            description: "The gender of the person (Male, Female, or Transgender).",
+          },
           aadhaarNumber: {
             type: Type.STRING,
             description: "The 12-digit Aadhaar number, formatted as XXXX XXXX XXXX if possible.",
           },
         },
-        required: ["name", "dob", "aadhaarNumber"],
-        propertyOrdering: ["name", "dob", "aadhaarNumber"],
+        required: ["name", "dob", "gender", "aadhaarNumber"],
+        propertyOrdering: ["name", "dob", "gender", "aadhaarNumber"],
       },
     },
   });

@@ -18,7 +18,7 @@ function doPost(e) {
     
     // Create headers if sheet is empty
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(["ID", "Name", "DOB", "Aadhaar Number", "Photo (Base64)", "Timestamp"]);
+      sheet.appendRow(["Name", "DOB", "Gender", "Aadhaar Number", "Photo (Base64)", "Timestamp"]);
       sheet.getRange(1, 1, 1, 6).setFontWeight("bold").setBackground("#f3f4f6");
     }
     
@@ -26,9 +26,9 @@ function doPost(e) {
     // Note: Google Sheets has a limit of 50,000 characters per cell. 
     // High-res base64 images might be truncated if they exceed this.
     sheet.appendRow([
-      data.id,
       data.name,
       data.dob,
+      data.gender,
       data.aadhaarNumber,
       data.photoUrl,
       data.timestamp

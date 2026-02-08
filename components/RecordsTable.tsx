@@ -5,7 +5,7 @@ import { Trash2, ExternalLink, Plus, Search, FileSpreadsheet, Download } from 'l
 
 interface RecordsTableProps {
   records: AadhaarData[];
-  onDelete: (id: string) => void;
+  onDelete: (timestamp: string) => void;
   onAdd: () => void;
 }
 
@@ -51,6 +51,7 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onDelete, o
                 <tr className="bg-slate-50 border-b border-slate-100">
                   <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Aadhaar Holder</th>
                   <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Details</th>
+                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Gender</th>
                   <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Aadhaar Number</th>
                   <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Timestamp</th>
                   <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
@@ -58,7 +59,7 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onDelete, o
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {records.map((record) => (
-                  <tr key={record.id} className="hover:bg-slate-50/80 transition-colors group">
+                  <tr key={record.timestamp} className="hover:bg-slate-50/80 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-slate-200 overflow-hidden flex-shrink-0">
@@ -69,6 +70,9 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onDelete, o
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-sm text-slate-600">DOB: {record.dob}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm text-slate-600 capitalize">{record.gender}</span>
                     </td>
                     <td className="px-6 py-4">
                       <code className="bg-slate-100 px-2 py-1 rounded text-slate-800 font-mono text-sm">
@@ -90,7 +94,7 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onDelete, o
                           <ExternalLink size={18} />
                         </button>
                         <button 
-                          onClick={() => onDelete(record.id)}
+                          onClick={() => onDelete(record.timestamp)}
                           className="p-2 text-slate-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100"
                           title="Delete Record"
                         >

@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
 import { OCRResult } from '../types';
-import { Check, X, User, Calendar, Hash, Save, Loader2 } from 'lucide-react';
+// Fixed: VenusMars renamed to VenusAndMars
+import { Check, X, User, Calendar, Hash, Save, Loader2, VenusAndMars } from 'lucide-react';
 
 interface DataVerificationProps {
   initialData: OCRResult;
@@ -20,7 +21,7 @@ export const DataVerification: React.FC<DataVerificationProps> = ({
 }) => {
   const [formData, setFormData] = useState<OCRResult>(initialData);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -87,21 +88,42 @@ export const DataVerification: React.FC<DataVerificationProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 text-slate-400">Aadhaar Number</label>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 text-slate-400">Gender</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                    <Hash size={18} />
+                    {/* Fixed: VenusMars renamed to VenusAndMars */}
+                    <VenusAndMars size={18} />
                   </div>
-                  <input 
-                    type="text"
-                    name="aadhaarNumber"
-                    value={formData.aadhaarNumber}
+                  <select 
+                    name="gender"
+                    value={formData.gender}
                     onChange={handleChange}
                     disabled={isSaving}
-                    placeholder="XXXX XXXX XXXX"
-                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-slate-800 font-medium disabled:opacity-50"
-                  />
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-slate-800 font-medium disabled:opacity-50 appearance-none"
+                  >
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Transgender">Transgender</option>
+                  </select>
                 </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 text-slate-400">Aadhaar Number</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <Hash size={18} />
+                </div>
+                <input 
+                  type="text"
+                  name="aadhaarNumber"
+                  value={formData.aadhaarNumber}
+                  onChange={handleChange}
+                  disabled={isSaving}
+                  placeholder="XXXX XXXX XXXX"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-slate-800 font-medium disabled:opacity-50"
+                />
               </div>
             </div>
           </div>
